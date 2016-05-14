@@ -63,7 +63,13 @@ class Command extends AbstractCommand
                  null,
                  InputOption::VALUE_NONE,
                  'Report code as dead if it is only called by dead code'
-             );
+             )
+            ->addOption(
+                'less-false-positives',
+                null,
+                InputOption::VALUE_NONE,
+                'Reduce the number of false positives'
+            );
     }
 
     /**
@@ -96,7 +102,8 @@ class Command extends AbstractCommand
 
         $result = $detector->detectDeadCode(
             $files,
-            $input->getOption('recursive')
+            $input->getOption('recursive'),
+            $input->getOption('less-false-positives')
         );
 
         if (!$quiet) {

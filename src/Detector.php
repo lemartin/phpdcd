@@ -20,9 +20,10 @@ class Detector
     /**
      * @param  array $files
      * @param  bool  $recursive
+     * @param  bool  $lessFalsePositives
      * @return array
      */
-    public function detectDeadCode(array $files, $recursive = false)
+    public function detectDeadCode(array $files, $recursive = false, $lessFalsePositives = false)
     {
 
         // Analyse files and collect declared and called functions
@@ -39,6 +40,14 @@ class Detector
         // Search for declared, unused functions.
         $result = array();
         foreach ($declared as $name => $source) {
+
+            if($lessFalsePositives) {
+                $parts = explode("::", $name);
+                if (count($parts) === 2 && (isset($called[$parts[1]]) || isset($called["::" . $parts[1]]))) {
+                    continue;
+                }
+            }
+
             if (!isset($called[$name])) {
                 // Unused function/method at first sight.
                 $used = false;
